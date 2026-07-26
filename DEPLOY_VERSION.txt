@@ -1,3 +1,3 @@
-ORRERY v3 deployed from main
-Commit: b6e1ccc9037330ae8129a6f87f3c5d5fd2ce291a
-Date: 2026-07-26
+ORRERY balanced cinematic render
+Commit follows ddc31e52
+Exposure 0.72, Bloom 0.22, corona 0.18
