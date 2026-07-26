@@ -1,26 +1,197 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ORRERY / Three.js Solar System</title>
-<style>
-:root{--bg:#080b0f;--panel:#10181e;--line:#2a3a42;--text:#edf2f2;--muted:#91a0a8;--cyan:#7ce7df;--amber:#ffbf69;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:16px system-ui,sans-serif}button,input{font:inherit}button{color:inherit;background:none;border:0;cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.app{display:grid;grid-template-columns:72px 1fr;height:100%}.rail{background:#090d11;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:16px;padding:18px 0}.brand{writing-mode:vertical-rl;transform:rotate(180deg);font:10px var(--mono);letter-spacing:.15em;color:var(--cyan);margin-bottom:20px}.nav{width:40px;height:40px;border:1px solid transparent;border-radius:9px;color:#81919a;font-size:18px}.nav:hover,.nav.active{color:var(--cyan);border-color:#4a7d80;background:#13292d}.grow{flex:1}.main{min-width:0}.top{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#0a0e12}.eyebrow,.tiny,.tag{font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}.eyebrow,.tiny{color:var(--muted)}.title{font-size:18px;font-weight:650}.online{font:10px var(--mono);color:var(--cyan);border:1px solid #3e6e6d;border-radius:99px;padding:7px 10px}.content{height:calc(100% - 72px)}.page{display:none;height:100%;overflow:auto}.page.active{display:block}.scene{height:100%;position:relative;background:radial-gradient(circle at 54% 46%,#182b30,#0b1218 33%,#080b0f 70%)}#space{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.scene-ui{position:absolute;inset:0;padding:28px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}.scene-head{display:flex;justify-content:space-between}.scene-head h1{font-size:clamp(38px,5vw,68px);line-height:.95;letter-spacing:-.07em;margin:0}.scene-head p{max-width:400px;color:var(--muted);font-size:14px;line-height:1.5}.tag{color:var(--amber);border:1px solid #755a37;background:#211a10;padding:8px;border-radius:4px}.hud{display:flex;justify-content:space-between;align-items:end}.readout{display:flex;gap:25px;padding:14px 17px;background:#0b1115;border-top:1px solid #416268}.readout b{display:block;color:var(--cyan);font:17px var(--mono)}.readout span{display:block;color:var(--muted);font:9px var(--mono);margin-top:4px;text-transform:uppercase}.hint{color:#718089;text-align:right;font:10px/1.7 var(--mono)}.panel{position:absolute;right:22px;top:22px;width:300px;max-height:calc(100% - 44px);overflow:auto;background:#0e151a;border:1px solid var(--line);border-radius:9px;z-index:2}.panel.hidden{display:none}.section{padding:18px;border-bottom:1px solid var(--line)}.section-title{display:flex;justify-content:space-between;margin-bottom:12px}.planet-list{display:grid;gap:3px}.planet{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:8px;width:100%;padding:8px 6px;border-radius:5px;text-align:left;color:var(--muted)}.planet:hover,.planet.selected{background:#1a2930;color:var(--text)}.dot{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c)}.code{font:9px var(--mono);color:#718089}.selected{display:flex;align-items:center;gap:10px}.orb{width:30px;height:30px;border-radius:50%;box-shadow:0 0 16px #d87858}.selected span{display:block;font:10px var(--mono);color:var(--muted)}.rule{height:1px;background:var(--line);margin:16px 0}.data{display:grid;grid-template-columns:1fr 1fr;gap:13px}.data label{font:9px var(--mono);color:var(--muted);text-transform:uppercase}.data b{display:block;font:11px var(--mono);margin-top:4px}.controls{display:grid;gap:13px}.row{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.switch{width:34px;height:20px;border-radius:99px;border:1px solid #52616a;background:#222e35;position:relative}.switch:after{content:"";position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#89969c;transition:.15s}.switch.on{background:#285358;border-color:#67aaa6}.switch.on:after{left:17px;background:var(--cyan)}input[type=range]{width:125px;accent-color:var(--cyan)}.actions{display:flex;gap:8px;padding:15px}.action{flex:1;border:1px solid var(--line);border-radius:5px;padding:9px;color:var(--muted);font-size:12px}.action:hover{border-color:#6b8c92;color:var(--text)}.primary{background:var(--cyan);border-color:var(--cyan);color:#081113;font-weight:700}.toast{position:fixed;right:22px;top:88px;z-index:5;padding:10px 13px;color:var(--cyan);background:#142329;border:1px solid #427274;border-radius:5px;font:11px var(--mono);opacity:0;transition:.2s}.toast.show{opacity:1}.shell{max-width:1200px;margin:auto;padding:30px}.shell h1{font-size:clamp(34px,4vw,58px);letter-spacing:-.06em;line-height:1;margin:0 0 12px}.shell p{color:var(--muted);max-width:620px;line-height:1.6}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px}.catalog-row,.setting{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.catalog-row:last-child,.setting:last-child{border:0}.catalog-dot{width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);flex:none}.catalog-row small{display:block;color:var(--muted);font:11px var(--mono);margin-top:3px}.focus{margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:7px 10px;font-size:11px}.focus:hover{color:var(--cyan);border-color:var(--cyan)}.observe-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.timeline{height:270px;border:1px solid var(--line);border-radius:8px;background:#101a20;position:relative}.error{display:none;position:absolute;inset:0;z-index:4;background:#080b0f;place-items:center;padding:30px}.error.show{display:grid}.error code{display:block;color:var(--amber);white-space:pre-wrap;max-width:600px;font:12px/1.5 var(--mono)}@media(max-width:850px){.panel{position:relative;right:auto;top:auto;width:auto;margin:15px}.scene{height:auto;min-height:700px}.observe-grid{grid-template-columns:1fr}}@media(max-width:600px){.app{grid-template-columns:1fr}.rail{position:fixed;bottom:0;left:0;right:0;height:62px;z-index:4;flex-direction:row;justify-content:space-around;padding:8px;border:0;border-top:1px solid var(--line)}.brand,.grow{display:none}.top{height:68px;padding:0 16px}.online{display:none}.scene-ui{padding:20px 16px 86px}.hint{display:none}.readout{gap:12px;padding:11px}.readout b{font-size:13px}.shell{padding:22px 16px 85px}}</style>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ORRERY / Three.js Solar System</title>
+  <meta name="description" content="Интерактивная 3D-модель Солнечной системы на Three.js: орбиты, каталог тел, управление временем.">
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js"></script>
 </head>
+
 <body>
-<div class="app"><nav class="rail" aria-label="Навигация"><div class="brand">ORRERY / FIX 2</div><button class="nav" data-page="system" aria-label="Система">◉</button><button class="nav" data-page="catalog" aria-label="Каталог">☷</button><button class="nav" data-page="observe" aria-label="Наблюдения">⌁</button><div class="grow"></div><button class="nav" data-page="settings" aria-label="Настройки">⚙</button></nav><main><header class="top"><div><div class="eyebrow">Three.js / heliocentric simulator</div><div class="title">Солнечная система / live scene</div></div><div class="online">● ONLINE</div></header><div class="content">
-<section class="page" data-view="system"><div class="scene" id="host"><canvas id="space" role="application" aria-label="3D модель Солнечной системы"></canvas><div class="scene-ui"><div class="scene-head"><div><h1>Смотри, как<br>движется время.</h1><p>Настоящее 3D: вращай, приближай, выбирай планеты.</p></div><div class="tag">THREE.JS / FIXED</div></div><div class="hud"><div class="readout"><div><b id="date">2026-07-26</b><span>simulation date</span></div><div><b id="zoom">1.0×</b><span>camera zoom</span></div><div><b id="speedText">1 day / 2 sec</b><span>time scale</span></div></div><div class="hint">DRAG TO ROTATE<br>PINCH / WHEEL TO ZOOM<br>CLICK A BODY</div></div></div><aside class="panel" id="panel"><div class="section"><div class="section-title"><b>Celestial bodies</b><span class="tiny">8 objects</span></div><div class="planet-list" id="list"></div></div><div class="section"><div class="section-title"><b id="selTitle">Mars</b><span class="tiny">selected</span></div><div class="selected"><div class="orb" id="selOrb"></div><div><b id="selName">Mars</b><span id="selType">terrestrial planet</span></div></div><div class="rule"></div><div class="data"><div><label>Distance</label><b id="dist">1.52 AU</b></div><div><label>Period</label><b id="period">687 days</b></div><div><label>Diameter</label><b id="diam">6,779 km</b></div><div><label>Moons</label><b id="moons">2 bodies</b></div></div></div><div class="section"><div class="section-title"><b>Scene controls</b><span class="tiny">live</span></div><div class="controls"><div class="row"><span>Time scale</span><input id="speed" type="range" min="1" max="5" value="2"></div><div class="row"><span>Orbital trails</span><button class="switch on" data-key="trails"></button></div><div class="row"><span>Body labels</span><button class="switch on" data-key="labels"></button></div><div class="row"><span>Auto rotate</span><button class="switch" data-key="rotate"></button></div><div class="row"><span>Realistic scale</span><button class="switch" data-key="realistic"></button></div></div></div><div class="actions"><button class="action" id="reset">↺ Reset</button><button class="action primary" id="pause">Ⅱ Pause</button></div></aside><div class="toast" id="toast"></div><div class="error" id="error"><div><h2>3D не запустился</h2><p>Реальная ошибка:</p><code id="errorText"></code></div></div></div></section>
-<section class="page" data-view="catalog"><div class="shell"><div class="eyebrow">Object library / 08 bodies</div><h1>Каталог объектов</h1><p>Выбирай объект и возвращайся в 3D с фокусом на нём.</p><div class="card" id="catalog"></div></div></section>
-<section class="page" data-view="observe"><div class="shell"><div class="eyebrow">Observation deck / live feed</div><h1>Наблюдения</h1><p>Режим связан с реальным состоянием симуляции.</p><button class="action primary" id="observe">▶ Запустить режим</button><div class="observe-grid"><div class="timeline"></div><div class="card"><h2 id="observeBody">Mars</h2><p>Выбранное тело синхронизировано со сценой.</p><b id="observeState">RUNNING</b></div></div></div></section>
-<section class="page" data-view="settings"><div class="shell"><div class="eyebrow">Workspace / preferences</div><h1>Настройки сцены</h1><p>Состояние сохраняется в браузере.</p><div class="card"><div class="setting"><span>Рендерер</span><b>WebGL / ES modules</b></div><div class="setting"><span>Управление</span><b>OrbitControls + touch</b></div><div class="setting"><span>Маршрут</span><b id="route">#/system</b></div><button class="action primary" id="clear">Сбросить состояние</button></div></div></section>
-</div></main></div>
-<script type="module">
-import * as THREE from 'three';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-const $=id=>document.getElementById(id);
-const P=[['Mercury','#aaa49d',.39,.206,7,87.97,'terrestrial planet','4,879 km','0 bodies',4],['Venus','#e5ad68',.72,.007,3.4,224.7,'terrestrial planet','12,104 km','0 bodies',6],['Earth','#4eafd1',1,.017,0,365.25,'terrestrial planet','12,742 km','1 body',7],['Mars','#d87858',1.52,.093,1.85,686.98,'terrestrial planet','6,779 km','2 bodies',6],['Jupiter','#d3ae8a',5.2,.049,1.3,4332.6,'gas giant','139,820 km','95 bodies',14],['Saturn','#d8c18f',9.54,.057,2.5,10759,'gas giant','116,460 km','146 bodies',12],['Uranus','#9bd6d8',19.19,.046,.77,30687,'ice giant','50,724 km','28 bodies',10],['Neptune','#647ed5',30.06,.01,1.77,60190,'ice giant','49,244 km','16 bodies',10]].map((x,i)=>({name:x[0],color:x[1],a:x[2],e:x[3],inc:x[4],period:x[5],type:x[6],diameter:x[7],moons:x[8],size:x[9],i}));
-const D={selected:3,paused:false,trails:true,labels:true,rotate:false,realistic:false,speed:2,date:'2026-07-26'};let s;try{s=Object.assign({},D,JSON.parse(localStorage.getItem('orrery-state')||'{}'))}catch{s={...D}}const save=()=>localStorage.setItem('orrery-state',JSON.stringify(s));function toast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1200)}
-function route(){const p=location.hash.replace('#/','')||'system';document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.dataset.view===p));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$('route').textContent='#/'+p;if(p==='catalog')renderCatalog();$('observeBody').textContent=P[s.selected].name;$('observeState').textContent=s.paused?'PAUSED':'RUNNING'}addEventListener('hashchange',route);document.addEventListener('click',e=>{const n=e.target.closest('[data-page]');if(n)location.hash='/'+n.dataset.page});
-let renderer,scene,camera,controls,clock,meshes=[],pivots=[],lines=[],focus=null,focusUntil=0;const canvas=$('space'),host=$('host');function renderList(){$('list').innerHTML=P.map(p=>`<button class="planet ${p.i===s.selected?'selected':''}" data-i="${p.i}"><i class="dot" style="--c:${p.color}"></i><span>${p.name}</span><span class="code">${p.name.slice(0,4).toUpperCase()}</span></button>`).join('');document.querySelectorAll('.planet').forEach(b=>b.onclick=()=>select(+b.dataset.i))}function renderCatalog(){$('catalog').innerHTML=P.map(p=>`<div class="catalog-row"><i class="catalog-dot" style="--c:${p.color}"></i><div><b>${p.name}</b><small>${p.type} · ${p.a.toFixed(2)} AU · ${p.period} days</small></div><button class="focus" data-focus="${p.i}">Фокус</button></div>`).join('');document.querySelectorAll('[data-focus]').forEach(b=>b.onclick=()=>{select(+b.dataset.focus);location.hash='/system'})}function select(i,move=true){s.selected=i;const p=P[i];$('selTitle').textContent=p.name;$('selName').textContent=p.name;$('selType').textContent=p.type;$('dist').textContent=p.a.toFixed(2)+' AU';$('period').textContent=p.period+' days';$('diam').textContent=p.diameter;$('moons').textContent=p.moons;$('selOrb').style.background=`radial-gradient(circle at 35% 30%,${p.color},#553f39 68%)`;$('observeBody').textContent=p.name;renderList();save();if(move)focusBody(i);toast('Фокус: '+p.name)}function resize(){if(!renderer)return;const w=host.clientWidth,h=host.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
-function init(){try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(host.clientWidth,host.clientHeight,false);scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(45,host.clientWidth/host.clientHeight,.01,500);camera.position.set(0,8,15);controls=new OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=2;controls.maxDistance=80;clock=new THREE.Clock();scene.add(new THREE.AmbientLight(0x293941,.18));const g=new THREE.BufferGeometry(),a=new Float32Array(4500*3);for(let i=0;i<a.length;i++)a[i]=(Math.random()-.5)*180;g.setAttribute('position',new THREE.BufferAttribute(a,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xbfdad9,size:.08})));scene.add(new THREE.Mesh(new THREE.SphereGeometry(.45,32,20),new THREE.MeshBasicMaterial({color:0xffbc68})));scene.add(new THREE.PointLight(0xffc27a,2.8,0,2));P.forEach(p=>{const q=new THREE.Group();q.rotation.x=THREE.MathUtils.degToRad(p.inc);scene.add(q);pivots.push(q);const c=new THREE.EllipseCurve(-p.a*p.e,0,p.a,p.a*Math.sqrt(1-p.e*p.e),0,Math.PI*2);const l=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(c.getPoints(256).map(v=>new THREE.Vector3(v.x,0,v.y))),new THREE.LineBasicMaterial({color:0x31565d,transparent:true,opacity:.5}));q.add(l);lines.push(l);const m=new THREE.Mesh(new THREE.SphereGeometry((s.realistic?p.size/60:p.size/30),32,20),new THREE.MeshStandardMaterial({color:p.color,roughness:.78}));m.position.set(p.a*(1-p.e),0,0);m.userData.i=p.i;q.add(m);meshes.push(m)});new ResizeObserver(resize).observe(host);let down={x:0,y:0};canvas.onpointerdown=e=>down={x:e.clientX,y:e.clientY};canvas.onpointerup=e=>{if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)return;const r=new THREE.Raycaster(),v=new THREE.Vector2((e.clientX-canvas.getBoundingClientRect().left)/canvas.clientWidth*2-1,-(e.clientY-canvas.getBoundingClientRect().top)/canvas.clientHeight*2+1);r.setFromCamera(v,camera);const h=r.intersectObjects(meshes);if(h.length)select(h[0].object.userData.i)};animate()}catch(e){$('errorText').textContent=String(e&&e.stack||e);$('error').classList.add('show')}}function focusBody(i){if(!controls||!meshes[i])return;focus=meshes[i];focusUntil=performance.now()+900}function animate(){requestAnimationFrame(animate);const dt=clock.getDelta();if(!s.paused){const days=dt*s.speed*182.625;P.forEach(p=>{pivots[p.i].rotation.y+=days/p.period*Math.PI*2});const d=new Date(s.date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+Math.floor(performance.now()/2000*s.speed));s.date=d.toISOString().slice(0,10);$('date').textContent=s.date}if(s.rotate)scene.rotation.y+=dt*.035;if(focus&&performance.now()<focusUntil){const t=focus.getWorldPosition(new THREE.Vector3());controls.target.lerp(t,.12);camera.position.lerp(t.clone().add(new THREE.Vector3(2,1.4,2)),.12)}else if(focus&&performance.now()>=focusUntil)focus=null;controls.update();lines.forEach(x=>x.visible=s.trails);renderer.render(scene,camera);$('observeState').textContent=s.paused?'PAUSED':'RUNNING'}document.querySelectorAll('[data-key]').forEach(b=>{b.classList.toggle('on',!!s[b.dataset.key]);b.onclick=()=>{b.classList.toggle('on');s[b.dataset.key]=b.classList.contains('on');save();toast(b.dataset.key+': '+(s[b.dataset.key]?'вкл':'выкл'))}});$('speed').value=s.speed;$('speed').oninput=e=>{s.speed=+e.target.value;$('speedText').textContent=['1 day / 4 sec','1 day / 2 sec','1 day / 1 sec','2 days / 1 sec','4 days / 1 sec'][s.speed-1];save()};$('pause').onclick=()=>{s.paused=!s.paused;$('pause').textContent=s.paused?'▶ Play':'Ⅱ Pause';save();toast(s.paused?'Пауза':'Продолжено')};$('reset').onclick=$('clear').onclick=()=>{localStorage.removeItem('orrery-state');location.reload()};$('observe').onclick=()=>{s.rotate=true;document.querySelector('[data-key="rotate"]').classList.add('on');save();location.hash='/system';toast('Режим наблюдения запущен')};list();renderCatalog();select(s.selected,false);route();init();
-</script></body></html>
+  <div class="app">
+
+    <!-- ============ Боковая навигация ============ -->
+    <nav class="rail" aria-label="Навигация">
+      <div class="brand">ORRERY</div>
+      <button class="nav" type="button" data-page="system"   aria-label="Система">◉</button>
+      <button class="nav" type="button" data-page="catalog"  aria-label="Каталог">☷</button>
+      <button class="nav" type="button" data-page="observe"  aria-label="Наблюдения">⌁</button>
+      <div class="grow"></div>
+      <button class="nav" type="button" data-page="settings" aria-label="Настройки">⚙</button>
+    </nav>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <div class="eyebrow">Three.js / heliocentric simulator</div>
+          <div class="title">Солнечная система / live scene</div>
+        </div>
+        <div class="online">● ONLINE</div>
+      </header>
+
+      <div class="content">
+
+        <!-- ============ Страница: 3D-сцена ============ -->
+        <section class="page is-active" data-view="system">
+          <div class="scene" id="host">
+            <canvas id="space" role="application" aria-label="3D модель Солнечной системы"></canvas>
+
+            <div class="scene-ui">
+              <div class="scene-head">
+                <div>
+                  <h1>Смотри, как<br>движется время.</h1>
+                  <p>Настоящее 3D: вращай, приближай, выбирай планеты.</p>
+                </div>
+                <div class="tag">THREE.JS / R160</div>
+              </div>
+
+              <div class="hud">
+                <div class="readout">
+                  <div><b id="date">2026-07-26</b><span>simulation date</span></div>
+                  <div><b id="zoom">1.0×</b><span>camera zoom</span></div>
+                  <div><b id="speedText">2 d / s</b><span>time scale</span></div>
+                </div>
+                <div class="hint">
+                  DRAG TO ROTATE<br>
+                  PINCH / WHEEL TO ZOOM<br>
+                  CLICK A BODY
+                </div>
+              </div>
+            </div>
+
+            <!-- Панель управления -->
+            <aside class="panel" id="panel">
+              <div class="section">
+                <div class="section-title">
+                  <b>Celestial bodies</b>
+                  <span class="tiny">8 objects</span>
+                </div>
+                <div class="planet-list" id="list"></div>
+              </div>
+
+              <div class="section">
+                <div class="section-title">
+                  <b id="selTitle">Mars</b>
+                  <span class="tiny">selected</span>
+                </div>
+                <div class="body-card">
+                  <div class="orb" id="selOrb"></div>
+                  <div>
+                    <b id="selName">Mars</b>
+                    <span id="selType">terrestrial planet</span>
+                  </div>
+                </div>
+                <div class="rule"></div>
+                <div class="data">
+                  <div><label>Distance</label><b id="dist">1.52 AU</b></div>
+                  <div><label>Period</label><b id="period">687 days</b></div>
+                  <div><label>Diameter</label><b id="diam">6,779 km</b></div>
+                  <div><label>Moons</label><b id="moons">2 bodies</b></div>
+                </div>
+              </div>
+
+              <div class="section">
+                <div class="section-title">
+                  <b>Scene controls</b>
+                  <span class="tiny">live</span>
+                </div>
+                <div class="controls">
+                  <div class="row">
+                    <label for="speed">Time scale</label>
+                    <input id="speed" type="range" min="1" max="5" step="1" value="2">
+                  </div>
+                  <div class="row">
+                    <span id="lbl-trails">Orbital trails</span>
+                    <button class="switch" type="button" data-key="trails" aria-labelledby="lbl-trails" aria-pressed="true"></button>
+                  </div>
+                  <div class="row">
+                    <span id="lbl-labels">Body labels</span>
+                    <button class="switch" type="button" data-key="labels" aria-labelledby="lbl-labels" aria-pressed="true"></button>
+                  </div>
+                  <div class="row">
+                    <span id="lbl-rotate">Auto rotate</span>
+                    <button class="switch" type="button" data-key="rotate" aria-labelledby="lbl-rotate" aria-pressed="false"></button>
+                  </div>
+                  <div class="row">
+                    <span id="lbl-realistic">Realistic scale</span>
+                    <button class="switch" type="button" data-key="realistic" aria-labelledby="lbl-realistic" aria-pressed="false"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="action" type="button" id="reset">↺ Reset</button>
+                <button class="action primary" type="button" id="pause">Ⅱ Pause</button>
+              </div>
+            </aside>
+
+            <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+            <div class="error" id="error">
+              <div>
+                <h2>3D не запустился</h2>
+                <p>Реальная ошибка:</p>
+                <code id="errorText"></code>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ Страница: каталог ============ -->
+        <section class="page" data-view="catalog">
+          <div class="shell">
+            <div class="eyebrow">Object library / 08 bodies</div>
+            <h1>Каталог объектов</h1>
+            <p>Выбирай объект и возвращайся в 3D с фокусом на нём.</p>
+            <div class="card" id="catalog"></div>
+          </div>
+        </section>
+
+        <!-- ============ Страница: наблюдения ============ -->
+        <section class="page" data-view="observe">
+          <div class="shell">
+            <div class="eyebrow">Observation deck / live feed</div>
+            <h1>Наблюдения</h1>
+            <p>Режим связан с реальным состоянием симуляции.</p>
+            <button class="action primary" type="button" id="observe">▶ Запустить режим</button>
+            <div class="observe-grid">
+              <div class="timeline"></div>
+              <div class="card">
+                <h2 id="observeBody">Mars</h2>
+                <p>Выбранное тело синхронизировано со сценой.</p>
+                <b id="observeState">RUNNING</b>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ Страница: настройки ============ -->
+        <section class="page" data-view="settings">
+          <div class="shell">
+            <div class="eyebrow">Workspace / preferences</div>
+            <h1>Настройки сцены</h1>
+            <p>Состояние сохраняется в браузере.</p>
+            <div class="card">
+              <div class="setting"><span>Рендерер</span><b>WebGL / ES modules</b></div>
+              <div class="setting"><span>Управление</span><b>OrbitControls + touch</b></div>
+              <div class="setting"><span>Маршрут</span><b id="route">#/system</b></div>
+              <button class="action primary" type="button" id="clear">Сбросить состояние</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</body>
+</html>
