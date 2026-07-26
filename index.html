@@ -3,195 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ORRERY / Three.js Solar System</title>
-  <meta name="description" content="Интерактивная 3D-модель Солнечной системы на Three.js: орбиты, каталог тел, управление временем.">
+  <title>ORRERY / Solar Observatory</title>
+  <meta name="description" content="Глубокий интерактивный 3D-симулятор Солнечной системы">
   <link rel="stylesheet" href="styles.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
   <script type="module" src="app.js"></script>
 </head>
-
 <body>
-  <div class="app">
-
-    <!-- ============ Боковая навигация ============ -->
-    <nav class="rail" aria-label="Навигация">
-      <div class="brand">ORRERY</div>
-      <button class="nav" type="button" data-page="system"   aria-label="Система">◉</button>
-      <button class="nav" type="button" data-page="catalog"  aria-label="Каталог">☷</button>
-      <button class="nav" type="button" data-page="observe"  aria-label="Наблюдения">⌁</button>
-      <div class="grow"></div>
-      <button class="nav" type="button" data-page="settings" aria-label="Настройки">⚙</button>
+  <div class="app-shell">
+    <nav class="rail" aria-label="Основная навигация">
+      <div class="wordmark">ORRERY<br><span>03</span></div>
+      <button class="rail-btn active" data-view="system" aria-label="Система">◉<span>SCENE</span></button>
+      <button class="rail-btn" data-view="catalog" aria-label="Каталог">⌘<span>CATALOG</span></button>
+      <button class="rail-btn" data-view="observe" aria-label="Наблюдения">◒<span>DECK</span></button>
+      <div class="rail-spacer"></div>
+      <button class="rail-btn" data-view="settings" aria-label="Настройки">⚙<span>SETUP</span></button>
     </nav>
 
-    <main class="main">
-      <header class="top">
-        <div>
-          <div class="eyebrow">Three.js / heliocentric simulator</div>
-          <div class="title">Солнечная система / live scene</div>
-        </div>
-        <div class="online">● ONLINE</div>
+    <main class="workspace">
+      <header class="topbar">
+        <div><div class="kicker">SOLAR OBSERVATORY / DEEP SPACE INDEX</div><h1>Солнечная система</h1></div>
+        <div class="top-status"><span class="status-dot"></span> LIVE MODEL <b id="sim-date">26 JUL 2026</b></div>
       </header>
 
-      <div class="content">
-
-        <!-- ============ Страница: 3D-сцена ============ -->
-        <section class="page is-active" data-view="system">
-          <div class="scene" id="host">
-            <canvas id="space" role="application" aria-label="3D модель Солнечной системы"></canvas>
-
-            <div class="scene-ui">
-              <div class="scene-head">
-                <div>
-                  <h1>Смотри, как<br>движется время.</h1>
-                  <p>Настоящее 3D: вращай, приближай, выбирай планеты.</p>
-                </div>
-                <div class="tag">THREE.JS / R160</div>
-              </div>
-
-              <div class="hud">
-                <div class="readout">
-                  <div><b id="date">2026-07-26</b><span>simulation date</span></div>
-                  <div><b id="zoom">1.0×</b><span>camera zoom</span></div>
-                  <div><b id="speedText">2 d / s</b><span>time scale</span></div>
-                </div>
-                <div class="hint">
-                  DRAG TO ROTATE<br>
-                  PINCH / WHEEL TO ZOOM<br>
-                  CLICK A BODY
-                </div>
-              </div>
-            </div>
-
-            <!-- Панель управления -->
-            <aside class="panel" id="panel">
-              <div class="section">
-                <div class="section-title">
-                  <b>Celestial bodies</b>
-                  <span class="tiny">8 objects</span>
-                </div>
-                <div class="planet-list" id="list"></div>
-              </div>
-
-              <div class="section">
-                <div class="section-title">
-                  <b id="selTitle">Mars</b>
-                  <span class="tiny">selected</span>
-                </div>
-                <div class="body-card">
-                  <div class="orb" id="selOrb"></div>
-                  <div>
-                    <b id="selName">Mars</b>
-                    <span id="selType">terrestrial planet</span>
-                  </div>
-                </div>
-                <div class="rule"></div>
-                <div class="data">
-                  <div><label>Distance</label><b id="dist">1.52 AU</b></div>
-                  <div><label>Period</label><b id="period">687 days</b></div>
-                  <div><label>Diameter</label><b id="diam">6,779 km</b></div>
-                  <div><label>Moons</label><b id="moons">2 bodies</b></div>
-                </div>
-              </div>
-
-              <div class="section">
-                <div class="section-title">
-                  <b>Scene controls</b>
-                  <span class="tiny">live</span>
-                </div>
-                <div class="controls">
-                  <div class="row">
-                    <label for="speed">Time scale</label>
-                    <input id="speed" type="range" min="1" max="5" step="1" value="2">
-                  </div>
-                  <div class="row">
-                    <span id="lbl-trails">Orbital trails</span>
-                    <button class="switch" type="button" data-key="trails" aria-labelledby="lbl-trails" aria-pressed="true"></button>
-                  </div>
-                  <div class="row">
-                    <span id="lbl-labels">Body labels</span>
-                    <button class="switch" type="button" data-key="labels" aria-labelledby="lbl-labels" aria-pressed="true"></button>
-                  </div>
-                  <div class="row">
-                    <span id="lbl-rotate">Auto rotate</span>
-                    <button class="switch" type="button" data-key="rotate" aria-labelledby="lbl-rotate" aria-pressed="false"></button>
-                  </div>
-                  <div class="row">
-                    <span id="lbl-realistic">Realistic scale</span>
-                    <button class="switch" type="button" data-key="realistic" aria-labelledby="lbl-realistic" aria-pressed="false"></button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button class="action" type="button" id="reset">↺ Reset</button>
-                <button class="action primary" type="button" id="pause">Ⅱ Pause</button>
-              </div>
-            </aside>
-
-            <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-            <div class="error" id="error">
-              <div>
-                <h2>3D не запустился</h2>
-                <p>Реальная ошибка:</p>
-                <code id="errorText"></code>
-              </div>
-            </div>
+      <section class="page active" data-page="system">
+        <div class="scene-layout">
+          <div class="viewport-wrap">
+            <canvas id="space" aria-label="Интерактивная трёхмерная модель Солнечной системы" role="application"></canvas>
+            <div class="scene-overlay scene-title"><div class="kicker">HELIOSPHERE / 01</div><div class="display-title">Время<br><em>движется.</em></div><p>Настоящие орбитальные элементы, спутники и следы движения.</p></div>
+            <div class="scene-overlay scene-bottom"><div class="hint">DRAG / ROTATE &nbsp; • &nbsp; WHEEL / ZOOM &nbsp; • &nbsp; 1–8 / SELECT</div><div class="scene-readout"><span><b id="readout-body">MARS</b><small>FOCUS</small></span><span><b id="readout-speed">2 d/s</b><small>TIME SCALE</small></span><span><b id="readout-zoom">1.0×</b><small>CAMERA</small></span></div></div>
+            <div class="scene-tools"><button id="mode-orbit" class="tool active">ORBIT</button><button id="mode-follow" class="tool">FOLLOW</button><button id="mode-cinematic" class="tool">CINEMATIC</button></div>
+            <div class="error-panel" id="webgl-error" hidden><b>WebGL не запустился</b><span>Проверь аппаратное ускорение браузера.</span></div>
           </div>
-        </section>
 
-        <!-- ============ Страница: каталог ============ -->
-        <section class="page" data-view="catalog">
-          <div class="shell">
-            <div class="eyebrow">Object library / 08 bodies</div>
-            <h1>Каталог объектов</h1>
-            <p>Выбирай объект и возвращайся в 3D с фокусом на нём.</p>
-            <div class="card" id="catalog"></div>
-          </div>
-        </section>
+          <aside class="inspector">
+            <div class="inspector-head"><div><div class="kicker">SELECTED BODY</div><h2 id="body-name">Mars</h2></div><button class="icon-btn" id="clear-selection" aria-label="Снять выделение">×</button></div>
+            <div class="body-hero"><div class="planet-orb" id="planet-orb"></div><div><span id="body-type">terrestrial planet</span><b id="body-fact">The red planet, cold and dry.</b></div></div>
+            <div class="stat-grid"><div><small>COMPOSITION</small><b id="body-composition">Basaltic rock</b></div><div><small>TEMP</small><b id="body-temp">−63 °C</b></div><div><small>GRAVITY</small><b id="body-gravity">3.71 m/s²</b></div><div><small>DAY</small><b id="body-day">24h 37m</b></div><div><small>MISSIONS</small><b id="body-missions">50+</b></div><div><small>SATELLITES</small><b id="body-moons">2</b></div></div>
+            <div class="inspector-section"><div class="section-line"><span>Nearby orbiters</span><span class="muted" id="nearby-count">2 active</span></div><div class="orbiter-list" id="orbiter-list"></div></div>
+            <div class="inspector-actions"><button class="button ghost" id="compare-btn">Compare</button><button class="button solid" id="tour-btn">Start tour</button></div>
+          </aside>
+        </div>
+        <div class="timeline-bar"><div class="timeline-head"><span class="kicker">SIMULATION TIMELINE</span><span id="timeline-label">26 JUL 2026 · 14:32 UTC</span><div class="timeline-actions"><button id="today-btn">TODAY</button><button data-event="mars-perihelion">MARS PERIHELION</button><button data-event="opposition">GREAT OPPOSITION</button><button data-event="alignment">PLANET PARADE</button></div></div><input id="timeline" type="range" min="-3650" max="3650" value="0" aria-label="Шкала времени симуляции"><div class="timeline-scale"><span>2016</span><span>2021</span><span>2026</span><span>2031</span><span>2036</span></div></div>
+      </section>
 
-        <!-- ============ Страница: наблюдения ============ -->
-        <section class="page" data-view="observe">
-          <div class="shell">
-            <div class="eyebrow">Observation deck / live feed</div>
-            <h1>Наблюдения</h1>
-            <p>Режим связан с реальным состоянием симуляции.</p>
-            <button class="action primary" type="button" id="observe">▶ Запустить режим</button>
-            <div class="observe-grid">
-              <div class="timeline"></div>
-              <div class="card">
-                <h2 id="observeBody">Mars</h2>
-                <p>Выбранное тело синхронизировано со сценой.</p>
-                <b id="observeState">RUNNING</b>
-              </div>
-            </div>
-          </div>
-        </section>
+      <section class="page" data-page="catalog"><div class="content-wrap"><div class="page-intro"><div class="kicker">OBJECT LIBRARY / 16 PRIMARY + 10 SATELLITES</div><h2>Каталог тел</h2><p>Состав, климат, гравитация и миссии. Выбирай объект, чтобы увидеть его в сцене.</p></div><div class="catalog-grid" id="catalog-grid"></div></div></section>
 
-        <!-- ============ Страница: настройки ============ -->
-        <section class="page" data-view="settings">
-          <div class="shell">
-            <div class="eyebrow">Workspace / preferences</div>
-            <h1>Настройки сцены</h1>
-            <p>Состояние сохраняется в браузере.</p>
-            <div class="card">
-              <div class="setting"><span>Рендерер</span><b>WebGL / ES modules</b></div>
-              <div class="setting"><span>Управление</span><b>OrbitControls + touch</b></div>
-              <div class="setting"><span>Маршрут</span><b id="route">#/system</b></div>
-              <button class="action primary" type="button" id="clear">Сбросить состояние</button>
-            </div>
-          </div>
-        </section>
+      <section class="page" data-page="observe"><div class="content-wrap"><div class="page-intro split"><div><div class="kicker">OBSERVATION DECK / EVENT INDEX</div><h2>Наблюдения</h2><p>События привязаны к шкале времени, а не нарисованы для вида.</p></div><div class="deck-date"><span id="deck-date">26 JUL 2026</span><small>SIMULATION DATE</small></div></div><div class="events-layout"><div class="event-list" id="event-list"></div><div class="tour-card"><div class="kicker">GUIDED TOUR / 09 STOPS</div><h3>От Солнца<br>к краю системы</h3><p id="tour-copy">Девять остановок, чтобы пройти путь от фотосферы до ледяных миров.</p><button class="button solid" id="observe-tour">Begin guided tour</button></div></div></div></section>
 
-      </div>
+      <section class="page" data-page="settings"><div class="content-wrap narrow"><div class="page-intro"><div class="kicker">SYSTEM / RENDER SETTINGS</div><h2>Настройки сцены</h2><p>Настройки влияют на рендер и сохраняются локально.</p></div><div class="settings-list"><label><span>Orbital trails</span><input type="checkbox" data-setting="trails" checked><i></i></label><label><span>Body labels</span><input type="checkbox" data-setting="labels" checked><i></i></label><label><span>Asteroid belt</span><input type="checkbox" data-setting="asteroids" checked><i></i></label><label><span>Kuiper belt</span><input type="checkbox" data-setting="kuiper" checked><i></i></label><label><span>Realistic scale</span><input type="checkbox" data-setting="realistic"><i></i></label></div><button class="button ghost" id="reset-settings">Reset local state</button></div></section>
     </main>
   </div>
+
+  <dialog id="compare-dialog"><div class="dialog-head"><div><div class="kicker">COMPARISON MODE</div><h2>Две планеты, один масштаб</h2></div><button class="icon-btn" id="close-compare">×</button></div><div class="compare-selects"><select id="compare-a"></select><span>VS</span><select id="compare-b"></select></div><div class="compare-stage"><div class="compare-body"><div class="compare-orb" id="compare-orb-a"></div><b id="compare-name-a">Earth</b><span id="compare-radius-a">6,371 km radius</span></div><div class="compare-chart"><div class="bar-row"><span>RADIUS</span><div><i id="bar-radius-a"></i><i id="bar-radius-b"></i></div></div><div class="bar-row"><span>MASS</span><div><i id="bar-mass-a"></i><i id="bar-mass-b"></i></div></div></div><div class="compare-body"><div class="compare-orb" id="compare-orb-b"></div><b id="compare-name-b">Mars</b><span id="compare-radius-b">3,390 km radius</span></div></div></dialog>
+  <div class="tour-overlay" id="tour-overlay" hidden><div class="tour-progress"><span id="tour-step">01</span><div><div class="kicker">GUIDED TOUR</div><b id="tour-title">The star at the center</b></div><button class="icon-btn" id="tour-close">×</button></div><p id="tour-description">Начнём с Солнца, источника света, тепла и гравитации всей системы.</p><div class="tour-controls"><button class="button ghost" id="tour-skip">Skip tour</button><button class="button solid" id="tour-next">Next stop →</button></div></div>
 </body>
 </html>
